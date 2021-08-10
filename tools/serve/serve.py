@@ -311,13 +311,13 @@ class ServiceWorkersHandler(HtmlWrapperHandler):
 <script src="/resources/testharnessreport.js"></script>
 <div id=log></div>
 <script>
-(async function() {
+fetch_tests_from_worker(async function() {
   const scope = 'does/not/exist';
   let reg = await navigator.serviceWorker.getRegistration(scope);
   if (reg) await reg.unregister();
   reg = await navigator.serviceWorker.register("%(path)s%(query)s", {scope});
-  fetch_tests_from_worker(reg.installing);
-})();
+  return reg.installing;
+});
 </script>
 """
 
@@ -333,7 +333,7 @@ class ServiceWorkerModulesHandler(HtmlWrapperHandler):
 <script src="/resources/testharnessreport.js"></script>
 <div id=log></div>
 <script>
-(async function() {
+fetch_tests_from_worker(async function() {
   const scope = 'does/not/exist';
   let reg = await navigator.serviceWorker.getRegistration(scope);
   if (reg) await reg.unregister();
@@ -341,8 +341,8 @@ class ServiceWorkerModulesHandler(HtmlWrapperHandler):
     "%(path)s%(query)s",
     { scope, type: 'module' },
   );
-  fetch_tests_from_worker(reg.installing);
-})();
+  return reg.installing;
+});
 </script>
 """
 

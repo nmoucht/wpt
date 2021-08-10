@@ -5,11 +5,11 @@
 <script src="/resources/testharnessreport.js"></script>
 <div id=log></div>
 <script>
-(async function() {
+fetch_tests_from_worker(async function() {
   const scope = 'does/not/exist';
   let reg = await navigator.serviceWorker.getRegistration(scope);
   if (reg) await reg.unregister();
   reg = await navigator.serviceWorker.register("/foo.any.worker.js", {scope});
-  fetch_tests_from_worker(reg.installing);
-})();
+  return reg.installing;
+});
 </script>
