@@ -841,12 +841,30 @@ fetch_tests_from_worker(new Worker("worker.js"));
 </script>
 ```
 
-The argument to the `fetch_tests_from_worker` function can be a
-[`Worker`](https://html.spec.whatwg.org/multipage/workers.html#dedicated-workers-and-the-worker-interface),
-a [`SharedWorker`](https://html.spec.whatwg.org/multipage/workers.html#shared-workers-and-the-sharedworker-interface)
-or a [`ServiceWorker`](https://w3c.github.io/ServiceWorker/#serviceworker-interface).
+The argument to the `fetch_tests_from_worker` function can be one of:
+
+- A [`Worker`](https://html.spec.whatwg.org/multipage/workers.html#dedicated-workers-and-the-worker-interface),
+  [`SharedWorker`](https://html.spec.whatwg.org/multipage/workers.html#shared-workers-and-the-sharedworker-interface)
+  or [`ServiceWorker`](https://w3c.github.io/ServiceWorker/#serviceworker-interface).
+- A promise that will resolve to one of the workers above.
+- A function that returns either one of the workers above or a promise that will
+  resolve to one.
+
 Once called, the containing document fetches all the tests from the worker and
 behaves as if those tests were running in the containing document itself.
+
+If the argument to `fetch_tests_from_worker` is a promise or a function that
+returns one, the test harness will not treat the test file as done until the
+promise resolves. This can be used to initialize service worker tests, since the
+load event might fire before they are registered:
+
+```js
+fetch_tests_from_worker(async () => {
+  const registration = await navigator.serviceWorker.register("./sw-test.js");
+  // The load event might have been fired by now, but the test file is not done.
+  return registration.installing;
+});
+```
 
 `fetch_tests_from_worker` returns a promise that resolves once all the remote
 tests have completed. This is useful if you're importing tests from multiple
