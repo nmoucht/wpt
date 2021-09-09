@@ -19,6 +19,15 @@
         const win = window.open(`http://${wwwHost}:${port}/cookies/ordering/resources/ordering-child.sub.html`);
         fetch_tests_from_window(win);
       });
+
+      test(t => {
+        assert_equals(document.cookie, "");
+      });
+
+      test(t => {
+        const win = window.open(`http://${wwwHost}:${port}/cookies/ordering/resources/ordering-refresh-child.sub.html`);
+        fetch_tests_from_window(win);
+      });
     </script>
   </body>
 </html>
